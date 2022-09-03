@@ -1,11 +1,13 @@
 #pragma once
 
-#include <GraphicsFramework/sfml.h>
+#include <SFML/Graphics.hpp>
 
 #include "Spacetime.hpp"
 #include "Matrix.hpp"
 #include "Tools.hpp"
 
+#define BLACK       sf::Color(0,0,0)
+#define WHITE       sf::Color(255,255,255)
 
 class SkyMap
 {
