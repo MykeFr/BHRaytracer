@@ -87,27 +87,27 @@ sf::Color ColorSkyMap::getPixelColor(double x, double y)
 
 	if (x > 0 && y > 0) {
 		if (x < pid2)
-			color = sf::Color(204, 0, 0); // dark red
+			color = DARK_RED;
 		else
-			color = sf::Color(255, 102, 102); // light red
+			color = LIGHT_RED;
 	}
 	else if (x < 0 && y > 0) {
 		if (x > -pid2)
-			color = sf::Color(255, 153, 51); // light orange
+			color = LIGHT_ORANGE;
 		else
-			color = sf::Color(255, 255, 51); // yellow
+			color = YELLOW;
 	}
 	else if (x > 0 && y < 0) {
 		if (x < pid2)
-			color = sf::Color(0, 0, 255); // dark blue
+			color = DARK_BLUE;
 		else
-			color = sf::Color(102, 178, 255); // light blue
+			color = LIGHT_BLUE;
 	}
 	else if (x < 0 && y < 0) {
 		if (x > -pid2)
-			color = sf::Color(0, 153, 0); // dark green
+			color = DARK_GREEN;
 		else
-			color = sf::Color(102, 255, 102); // light green
+			color = LIGHT_GREEN;
 	}
 
 	if (std::abs(std::remainder(x, grid_angle)) <= thickness)
