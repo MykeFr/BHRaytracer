@@ -5,13 +5,48 @@
 #include "Spacetime.hpp"
 
 #include "SkyMap.hpp"
+#include "FileParser.hpp"
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
 #endif
 
+struct Config{   
+    std::vector<double> position; // spherical coords
+    std::vector<double> velocity; // light speed proportional
+    double inclination; // view inclination angle in degrees
+    double azimuth; // view azimuth angle in degrees
+    double fov_horizontal; // horizontal field of view
+    double fov_vertical; // vertical field of view
+    int dimensions; // width of the resulting image
+    bool do_elliptic_parametrization;
+    double grid_angle; // angle between each line of the grid in degrees, latitude/longitude
+    double grid_thickness; // thickness of each grid line in degrees
+};
+
+void readConfigFile(const std::string& config_file, Config& config){
+    FileParser fp (config_file, true);
+    fp.get("position", config.position);
+    fp.get("velocity", config.velocity);
+    fp.get("inclination", config.inclination);
+    fp.get("azimuth", config.azimuth);
+    fp.get("fov_horizontal", config.fov_horizontal);
+    fp.get("fov_vertical", config.fov_vertical);
+    fp.get("dimensions", config.dimensions);
+    fp.get("do_elliptic_parametrization", config.do_elliptic_parametrization);
+    fp.get("grid_angle", config.grid_angle);
+    fp.get("grid_thickness", config.grid_thickness);
+}
+
+double toRadians(const double degrees){
+    return degrees / 180.0 * M_PI;
+}
+
 int main()
 {
+    Config config;
+    readConfigFile("config.txt", config);
+
     // ############### SPACETIME ###############
     // Flat st;
     
@@ -22,42 +57,33 @@ int main()
     // double a = 0.;
     // Kerr st(M, a);
 
-    // ############### AGENT ###############
-
-    // spherical coords
-    VecD position({10., M_PI / 2., 0.});
-    // light speed proportional
-    VecD velocity({0., 0.0, 0.0});
-
-    // view inclination angle in radians
-    const double alpha = 180. / 180. * M_PI;
-    // view azimuth angle in radians
-    const double beta = 0. / 180. * M_PI;
-
-    //Spacetime, position, velocity, view_alpha, view_beta, velocity squared
-    Particle par(st, position, velocity, alpha, beta, -1.);
+    // ############### OBSERVER ###############
+        
+    VecD position = {config.position[0], toRadians(config.position[1]), toRadians(config.position[2])};
+    const double alpha = toRadians(config.inclination);
+    const double beta = toRadians(config.azimuth);
+    // arguments: Spacetime, position, velocity, view_alpha, view_beta, velocity squared
+    Particle par(st, position, config.velocity, alpha, beta, -1.);
     
-    // set the vertical and horizontal field of view
-    const field_of_view = 45. / 180. * M_PI;
-    par.setAngleViews(field_of_view, field_of_view);
+    const double field_of_view_horizontal = toRadians(config.fov_horizontal);
+    const double field_of_view_vertical = toRadians(config.fov_vertical);
+    par.setAngleViews(field_of_view_horizontal, field_of_view_vertical);
     
-    const int dim = 200;
     // create a matrix with the positional information of the pixel in the 
     // original sky for each pixel inside the view
     // matrix of size  dim x dim, if the horizontal and vertical angles 
     // of the FOV are the same
-    auto mat = par.view(dim);
+    auto mat = par.view(config.dimensions);
 
     // ############### SKY ###############
     
-    const bool do_elliptic_parametrization = false;
     // load an image to fill the sky
-    ImageSkyMap sky(st, "res/images/stars_3.jpg", do_elliptic_parametrization);
+    // ImageSkyMap sky(st, "res/images/stars_3.jpg", do_elliptic_parametrization);
     
     // color the sky with 8 colors
-    // bool grid_agle =  M_PI / 18.;
-    // bool thickness = M_PI / 180. / 5.;
-    //ColorSkyMap sky(st, do_elliptic_parametrization, grid_agle, thickness);
+    const double grid_angle =  toRadians(config.grid_angle);
+    const double thickness = toRadians(config.grid_thickness);
+    ColorSkyMap sky(st, config.do_elliptic_parametrization, grid_angle, thickness);
 
     // ############### RESULTS ###############
     
