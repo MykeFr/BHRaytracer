@@ -12,6 +12,7 @@ VecD SkyMap::getCoordinates(double theta, double phi)
 {
 	theta -= M_PI / 2;
 
+	// make phi from -Pi to Pi
 	while (phi > M_PI)
 		phi -= 2. * M_PI;
 
@@ -61,15 +62,24 @@ sf::Image SkyMap::getSkyView(const Matrix<VecD>& mat)
 
 				VecD coords = getCoordinates(theta, phi);
 				color = getPixelColor(coords[0], coords[1]);
-				color = redshiftColor(color, vec[7]);
+				//color = redshiftColor(color, vec[7]);
 			}
 
+			// std::cout << (int)color.r << " " << (int)color.g << " " << (int)color.b << std::endl;
 			view.setPixel(c, l, color);
 		}
 	}
 
 	return view;
 }
+
+sf::Color SkyMap::mixColors(sf::Color color1, sf::Color color2, double percentage)
+{
+	return sf::Color((1 - percentage) * color1.r + percentage * color2.r,
+	                 (1 - percentage) * color1.g + percentage * color2.g,
+	                 (1 - percentage) * color1.b + percentage * color2.b);
+}
+
 
 ColorSkyMap::ColorSkyMap(const Spacetime& a_st,
                          bool do_elliptic_parametrization, double a_grid_angle,
@@ -83,32 +93,14 @@ sf::Color ColorSkyMap::getPixelColor(double x, double y)
 {
 	sf::Color color;
 
-	static double pid2 = M_PI / 2.;
-
-	if (x > 0 && y > 0) {
-		if (x < pid2)
-			color = DARK_RED;
-		else
-			color = LIGHT_RED;
-	}
-	else if (x < 0 && y > 0) {
-		if (x > -pid2)
-			color = LIGHT_ORANGE;
-		else
-			color = YELLOW;
-	}
-	else if (x > 0 && y < 0) {
-		if (x < pid2)
-			color = DARK_BLUE;
-		else
-			color = LIGHT_BLUE;
-	}
-	else if (x < 0 && y < 0) {
-		if (x > -pid2)
-			color = DARK_GREEN;
-		else
-			color = LIGHT_GREEN;
-	}
+	if (x > 0 && y > 0)
+		color = mixColors(DARK_RED, LIGHT_RED, x / M_PI);
+	else if (x < 0 && y > 0)
+		color = mixColors(YELLOW, LIGHT_ORANGE, -x / M_PI);
+	else if (x > 0 && y < 0)
+		color = mixColors(DARK_BLUE, LIGHT_BLUE, x / M_PI);
+	else if (x < 0 && y < 0)
+		color = mixColors(DARK_GREEN, LIGHT_GREEN, -x / M_PI);
 
 	if (std::abs(std::remainder(x, grid_angle)) <= thickness)
 		color = BLACK;
@@ -180,7 +172,8 @@ sf::Color redshiftColor(sf::Color color, double factor)
 
 	assert(color.a == 255);
 
-	sf::Color out = sf::Color(std::min(255., red_new.r * R + green_new.r * G + blue_new.r * B),
+	sf::Color out = sf::Color(std::min(255.,
+	                                   red_new.r * R + green_new.r * G + blue_new.r * B),
 	                          std::min(255., red_new.g * R + green_new.g * G + blue_new.g * B),
 	                          std::min(255., red_new.b * R + green_new.b * G + blue_new.b * B),
 	                          255.);

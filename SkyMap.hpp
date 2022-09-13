@@ -32,6 +32,9 @@ public:
 protected:
     const Spacetime& st;
     bool do_elliptic_parametrization = false;
+
+protected:
+    static sf::Color mixColors(sf::Color color1, sf::Color color2, double percentage);
 };
 
 class ColorSkyMap : public SkyMap
