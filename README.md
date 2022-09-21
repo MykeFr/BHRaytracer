@@ -37,4 +37,6 @@ To run simply execute the following command
 
 ![](https://github.com/MykeFr/BHRaytracer/blob/main/generated/color_map_BH_400_resolution.png?raw=true)
 ![](https://github.com/MykeFr/BHRaytracer/blob/main/generated/walk_around.gif?raw=true)
+![](https://github.com/MykeFr/BHRaytracer/blob/main/generated/color_map_zoom_in.png?raw=true)
+![](https://github.com/MykeFr/BHRaytracer/blob/main/generated/stars_map_zoom_in.png?raw=true)
 ![](https://github.com/MykeFr/BHRaytracer/blob/main/generated/color_map_einstein_ring_BH.png?raw=true)

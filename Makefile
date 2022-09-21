@@ -61,7 +61,7 @@ endif
 # endif
 
 ifneq ($(or $(d), $(D), $(DEBUG)),)
-DEBUG	:= -pg -g
+DEBUG	:= -pg
 $(info Compiling for DEBUG)
 else
 DEBUG	:= 
