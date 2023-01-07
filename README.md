@@ -23,6 +23,12 @@ unpack it and copy the files to your preferred location
 ```bash
   SFML_ROOT="<path-to-SFML-folder>"
 ```
+
+5 - Update your library path with:
+
+```bash
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path-to-SFML-folder>/lib/
+```
     
 ## Running
 
