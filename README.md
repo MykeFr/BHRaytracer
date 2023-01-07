@@ -6,7 +6,7 @@
 ## Authors
 
 - [@Tiago França](https://github.com/TaigoFr)
-- [@Miguel França](https://github.com/MykeFr)
+- [@Miguel França](https://github.com/miguelfranca)
 
 
 ## Installation
